@@ -1,0 +1,58 @@
+-- Create a new database
+CREATE DATABASE university;
+USE university;
+CREATE TABLE students (
+  student_id   INT           AUTO_INCREMENT,
+  first_name   VARCHAR(50)   NOT NULL,
+  last_name    VARCHAR(50)   NOT NULL,
+  email        VARCHAR(100)  NOT NULL,
+  age          INT           NOT NULL,
+  PRIMARY KEY (student_id),
+  UNIQUE (email),
+  CHECK (age >= 16)
+);
+CREATE TABLE courses (
+  course_id     INT           AUTO_INCREMENT,
+  course_code   VARCHAR(10)   NOT NULL,
+  title         VARCHAR(100)  NOT NULL,
+  credits       INT           NOT NULL,
+  PRIMARY KEY (course_id),
+  UNIQUE (course_code)
+);
+CREATE TABLE enrollments (
+  enrollment_id  INT    AUTO_INCREMENT,
+  student_id     INT    NOT NULL,
+  course_id      INT    NOT NULL,
+  grade          INT    NOT NULL,
+  PRIMARY KEY (enrollment_id),
+  FOREIGN KEY (student_id) REFERENCES students(student_id),
+  FOREIGN KEY (course_id)  REFERENCES courses(course_id),
+  CHECK (grade BETWEEN 0 AND 100)
+);
+INSERT INTO students (first_name, last_name, email, age) VALUES
+  ('Alice',   'Chen',    'alice.chen@example.com',   20),
+  ('Bob',     'Davis',   'bob.davis@example.com',    18),
+  ('Carla',   'Evans',   'carla.evans@example.com',  22);
+INSERT INTO courses (course_code, title,               credits) VALUES
+  ('CS101',  'Intro to Computer Science',              3),
+  ('MATH201','Calculus I',                             4),
+  ('ENG150', 'Academic Writing',                       2);
+INSERT INTO enrollments (student_id, course_id, grade) VALUES
+  (1, 1,  85),
+  (1, 2,  90),
+  (2, 1,  78),
+  (3, 3,  92);
+  SELECT * FROM students;
+  SELECT * FROM courses;
+
+SELECT
+  e.enrollment_id,
+  s.first_name  AS student_first,
+  s.last_name   AS student_last,
+  c.course_code,
+  c.title       AS course_title,
+  e.grade
+FROM enrollments e
+JOIN students s ON e.student_id = s.student_id
+JOIN courses  c ON e.course_id  = c.course_id;
+
